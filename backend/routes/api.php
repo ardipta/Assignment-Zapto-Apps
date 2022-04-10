@@ -18,7 +18,7 @@ Route::group([
     'middleware' => 'api',
     'namespace' => 'App\Http\Controllers\API',
     'prefix' => 'auth'
-], function ($router){
+], function (){
     Route::post('login', 'AuthController@login');
     Route::post('register', 'AuthController@register');
     Route::post('logout', 'AuthController@logout');
@@ -28,6 +28,6 @@ Route::group([
 
 Route::group([
     'namespace' => 'App\Http\Controllers\API',
-], function ($router){
+], function (){
     Route::resource('product', 'ProductController');
 });

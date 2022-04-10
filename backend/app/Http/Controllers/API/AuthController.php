@@ -24,16 +24,23 @@ class AuthController extends Controller
         ]);
 
         if($validator->fails()){
-            return response()->json($validator->errors(), 400);
+            return response()->json([
+                'status' => false,
+                'message' => $validator->errors(),
+            ]);
         }
         $tokenValidity = 24 * 60;
         $this->guard()->factory()->setTTL($tokenValidity);
         if(!$token=$this->guard()->attempt($validator->validated())){
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorised Access!!',
+            ]);
         }
         return $this->respondWithToken($token);
     }
-    public function register(Request $request){
+    public function register(Request $request): JsonResponse
+    {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|between:2,100',
             'email' => 'required|email|unique:users',
@@ -41,9 +48,12 @@ class AuthController extends Controller
         ]);
 
         if($validator->fails()){
-            return response()->json($validator->errors(), 422);
+            return response()->json([
+                'status' => false,
+                'message' => $validator->errors(),
+                'user'=> null
+            ]);
         }
-
         $user=User::create(array_merge(
             $validator->validated(),
             ['password' => bcrypt($request->input('password'))]
